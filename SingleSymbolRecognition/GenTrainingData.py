@@ -17,7 +17,7 @@ if __name__ == '__main__':
     with open('symbols.txt') as f:
         symbols = f.read()
     with open('fonts.txt') as f:
-        fonts = f.read().split('\n')
+        fonts = [font for font in f.read().split('\n') if font]
     with open('resolutions.txt') as f:
         resolutions = f.read().split('\n')
     if not os.path.exists('TrainingData'):
