@@ -1,10 +1,11 @@
 """
 Introduction to neural networks
 """
+import random
 import math
 
 
-LEARNING_RATE = 0.4
+LEARNING_RATE = 0.3
 
 
 def sigmoid(arg):
@@ -14,9 +15,9 @@ def sigmoid(arg):
     return 1 / (1 + math.exp(-arg))
 
 
-def train(x_layer, hid_layer, x_data, exp_res):
+def get_actual(x_layer, hid_layer, x_data):
     """
-    The function is used for clarification of NN's coefficients
+    Forward calculation for NN
     """
     hid_layer['val'] = [0, 0]
     for i, x_arr in enumerate(x_layer['weight']):
@@ -31,6 +32,14 @@ def train(x_layer, hid_layer, x_data, exp_res):
         y_layer['val'] += hid_layer['val'][i] * hid_layer['weight'][i]
     y_layer['val'] = sigmoid(y_layer['val'])
 
+    return y_layer
+
+
+def train(x_layer, hid_layer, x_data, exp_res):
+    """
+    The function is used for clarification of NN's coefficients
+    """
+    y_layer = get_actual(x_layer, hid_layer, x_data)
     y_layer['delta'] = exp_res - y_layer['val']
     hid_layer['delta'] = list(map(lambda x: x * y_layer['delta'],
                                   hid_layer['weight']))
@@ -64,6 +73,18 @@ def write(dictionary):
     print("}")
 
 
+def shuffle(x_layer, hid_layer):
+    """
+    The function gives random weights for coefficients
+    """
+    for arr in x_layer['weight']:
+        arr[0] = random.random()
+        arr[1] = random.random()
+
+    for i, _ in enumerate(hid_layer):
+        hid_layer[i] = random.random()
+
+
 def main():
     """
     The main function of the application
@@ -74,8 +95,9 @@ def main():
     hid_layer = {
         'weight': [0.5, 0.5],
     }
+    # shuffle(x_layer, hid_layer)
     write(x_layer)
-    for _ in range(10000):
+    for _ in range(1000):
         train(x_layer, hid_layer, [0, 0, 0], 0)
         train(x_layer, hid_layer, [0, 0, 1], 1)
         train(x_layer, hid_layer, [0, 1, 0], 0)
@@ -85,6 +107,15 @@ def main():
         train(x_layer, hid_layer, [1, 1, 0], 0)
         train(x_layer, hid_layer, [1, 1, 1], 0)
     write(x_layer)
+
+    print(get_actual(x_layer, hid_layer, [0, 0, 0])['val'])
+    print(get_actual(x_layer, hid_layer, [0, 0, 1])['val'])
+    print(get_actual(x_layer, hid_layer, [0, 1, 0])['val'])
+    print(get_actual(x_layer, hid_layer, [0, 1, 1])['val'])
+    print(get_actual(x_layer, hid_layer, [1, 0, 0])['val'])
+    print(get_actual(x_layer, hid_layer, [1, 0, 1])['val'])
+    print(get_actual(x_layer, hid_layer, [1, 1, 0])['val'])
+    print(get_actual(x_layer, hid_layer, [1, 1, 1])['val'])
 
 
 if __name__ == '__main__':
