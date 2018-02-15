@@ -4,7 +4,7 @@ Introduction to neural networks
 import math
 
 
-LEARNING_RATE = 0.2
+LEARNING_RATE = 0.4
 
 
 def sigmoid(arg):
@@ -54,6 +54,16 @@ def train(x_layer, hid_layer, x_data, exp_res):
                          hid_layer['diff'][j] * LEARNING_RATE)
 
 
+def write(dictionary):
+    """
+    Beautify dictionary
+    """
+    print("{")
+    for key in dictionary:
+        print(key, dictionary[key])
+    print("}")
+
+
 def main():
     """
     The main function of the application
@@ -64,7 +74,17 @@ def main():
     hid_layer = {
         'weight': [0.5, 0.5],
     }
-    train(x_layer, hid_layer, [1, 0, 0], 1)
+    write(x_layer)
+    for _ in range(10000):
+        train(x_layer, hid_layer, [0, 0, 0], 0)
+        train(x_layer, hid_layer, [0, 0, 1], 1)
+        train(x_layer, hid_layer, [0, 1, 0], 0)
+        train(x_layer, hid_layer, [0, 1, 1], 1)
+        train(x_layer, hid_layer, [1, 0, 0], 1)
+        train(x_layer, hid_layer, [1, 0, 1], 1)
+        train(x_layer, hid_layer, [1, 1, 0], 0)
+        train(x_layer, hid_layer, [1, 1, 1], 0)
+    write(x_layer)
 
 
 if __name__ == '__main__':
