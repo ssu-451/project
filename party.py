@@ -40,27 +40,24 @@ def train(x_layer, hid_layer, x_data, exp_res):
     The function is used for clarification of NN's coefficients
     """
     y_layer = get_actual(x_layer, hid_layer, x_data)
-    y_layer['delta'] = exp_res - y_layer['val']
-    hid_layer['delta'] = list(map(lambda x: x * y_layer['delta'],
-                                  hid_layer['weight']))
-    y_diff = sigmoid(y_layer['val']) * (1 - sigmoid(y_layer['val']))
+
+    y_layer['delta'] = ((exp_res - y_layer['val']) *
+                        sigmoid(y_layer['val']) *
+                        (1 - sigmoid(y_layer['val'])))
 
     for i, _ in enumerate(hid_layer['weight']):
         hid_layer['weight'][i] += (
-            hid_layer['val'][i] * hid_layer['delta'][i] *
-            y_diff * LEARNING_RATE)
+            hid_layer['val'][i] * y_layer['delta'] * LEARNING_RATE)
 
-    x_layer['delta'] = [0, 0, 0]
-    for i, x_arr in enumerate(x_layer['weight']):
-        for j, weight in enumerate(x_arr):
-            x_layer['delta'][i] += hid_layer['delta'][j] * weight
+    hid_layer['delta'] = [0, 0]
+    for i, _ in enumerate(hid_layer['delta']):
+        hid_layer['delta'][i] = (hid_layer['weight'][i] * y_layer['delta'] *
+                                 sigmoid(hid_layer['val'][i]) *
+                                 (1 - sigmoid(hid_layer['val'][i])))
 
-    hid_layer['diff'] = list(map(lambda x: sigmoid(x) * (1 - sigmoid(x)),
-                                 hid_layer['val']))
     for i, x_arr in enumerate(x_layer['weight']):
-        for j, weight in enumerate(x_arr):
-            x_arr[j] += (x_data[i] * x_layer['delta'][i] *
-                         hid_layer['diff'][j] * LEARNING_RATE)
+        for j, _ in enumerate(x_arr):
+            x_arr[j] += x_data[i] * hid_layer['delta'][j] * LEARNING_RATE
 
 
 def write(dictionary):
@@ -82,7 +79,7 @@ def shuffle(x_layer, hid_layer):
         arr[1] = random.random()
 
     for i, _ in enumerate(hid_layer):
-        hid_layer[i] = random.random()
+        hid_layer['weight'][i] = random.random()
 
 
 def main():
@@ -95,17 +92,17 @@ def main():
     hid_layer = {
         'weight': [0.5, 0.5],
     }
-    # shuffle(x_layer, hid_layer)
+    shuffle(x_layer, hid_layer)
     write(x_layer)
     for _ in range(1000):
         train(x_layer, hid_layer, [0, 0, 0], 0)
-        train(x_layer, hid_layer, [0, 0, 1], 1)
+        train(x_layer, hid_layer, [0, 0, 1], 1)  # 1
         train(x_layer, hid_layer, [0, 1, 0], 0)
-        train(x_layer, hid_layer, [0, 1, 1], 1)
-        train(x_layer, hid_layer, [1, 0, 0], 1)
-        train(x_layer, hid_layer, [1, 0, 1], 1)
+        train(x_layer, hid_layer, [0, 1, 1], 0)  # 1
+        train(x_layer, hid_layer, [1, 0, 0], 1)  # 1
+        train(x_layer, hid_layer, [1, 0, 1], 1)  # 1
         train(x_layer, hid_layer, [1, 1, 0], 0)
-        train(x_layer, hid_layer, [1, 1, 1], 0)
+        train(x_layer, hid_layer, [1, 1, 1], 1)
     write(x_layer)
 
     print(get_actual(x_layer, hid_layer, [0, 0, 0])['val'])
