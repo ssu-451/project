@@ -11,49 +11,55 @@ import os
 import tqdm
 import selenium.webdriver
 
-if __name__ == '__main__':
-    PARSER = argparse.ArgumentParser()
-    PARSER.add_argument('-f', '--force', action='store_true',
+
+def generate():
+    """The main function, which does the generation, hence the name :)"""
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f', '--force', action='store_true',
                         help='Force regenerate existing images')
-    ARGS = PARSER.parse_args()
-    if not ARGS.force:
+    args = parser.parse_args()
+    if not args.force:
         print('Launch this executable with -h parameter for help')
-    with open('symbols.txt') as f:
-        SYMBOLS = f.read()
-    with open('fonts.txt') as f:
-        FONTS = [font for font in f.read().split('\n') if font]
-    with open('resolutions.txt') as f:
-        RESOLUTIONS = f.read().split('\n')
+    with open('symbols.txt') as file:
+        symbols = file.read()
+    with open('fonts.txt') as file:
+        fonts = [font for font in file.read().split('\n') if font]
+    with open('resolutions.txt') as file:
+        resolutions = file.read().split('\n')
     if not os.path.exists('TrainingData'):
         os.mkdir('TrainingData')
-    RESOLUTION_PATTERN = re.compile(r'(\d+)x(\d+)')
-    PBAR = tqdm.tqdm(total=len(RESOLUTIONS) * len(FONTS) * len(SYMBOLS))
-    for resolution in RESOLUTIONS:
-        match = RESOLUTION_PATTERN.match(resolution)
+    resolution_pattern = re.compile(r'(\d+)x(\d+)')
+    pbar = tqdm.tqdm(total=len(resolutions) * len(fonts) * len(symbols))
+    for resolution in resolutions:
+        match = resolution_pattern.match(resolution)
         if match is None:
-            PBAR.update(len(FONTS) * len(SYMBOLS))
+            pbar.update(len(fonts) * len(symbols))
             continue
         driver = selenium.webdriver.PhantomJS()
         driver.set_window_size(int(match.group(1)), int(match.group(2)))
         driver.get('test.html')
-        for font in FONTS:
+        for font in fonts:
             driver.execute_script(
                 '$("div").css("font-family", "{0}");'.format(font))
             # driver.execute_script('''''')
-            for symbol in SYMBOLS:
+            for symbol in symbols:
                 if symbol in ['\n', '\t', '\r']:
-                    PBAR.update()
+                    pbar.update()
                     continue
-                imageName = 'TrainingData/R{res}|F{font}|S{symbol}.png'.format(
-                    res=resolution,
-                    font=font,
-                    symbol=symbol)
-                if os.path.exists(imageName) and not ARGS.force:
-                    PBAR.update()
+                image_name = ('TrainingData/'
+                              'R{res}|F{font}|S{symbol}.png').format(
+                                  res=resolution, font=font, symbol=symbol)
+                if os.path.exists(image_name) and not args.force:
+                    pbar.update()
                     continue
                 script = '$("div").html({0});'.format(
                     '"{0}"'.format(
                         symbol) if symbol != '"' else "'{0}'".format(symbol))
                 driver.execute_script(script)
-                driver.save_screenshot(imageName)
-                PBAR.update()
+                driver.save_screenshot(image_name)
+                pbar.update()
+
+
+if __name__ == '__main__':
+    generate()
