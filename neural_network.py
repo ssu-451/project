@@ -26,6 +26,9 @@ class NeuralNetwork():
         self.shuffle()
 
     def shuffle(self):
+        """
+        asd
+        """
         for i, _ in enumerate(self.graph):
             for j, _ in enumerate(self.graph[i]):
                 for k, _ in enumerate(self.graph[i][j]):
@@ -91,10 +94,9 @@ def main():
     for i, _ in enumerate(network.graph):
         for j, _ in enumerate(network.graph[i]):
             print('[{}, {}]'.format(i, j))
-            for k, _ in enumerate(network.graph[i][j]):
-                pass
+            for _, _ in enumerate(network.graph[i][j]):
                 # print('{:.2f}'.format(network.graph[i][j][k]))
-                
+                pass
 
     for _ in range(1000):
         network.train([0, 0, 0], 0)
@@ -114,7 +116,6 @@ def main():
     print(network.run([1, 0, 1]))
     print(network.run([1, 1, 0]))
     print(network.run([1, 1, 1]))
-        
 
 
 if __name__ == '__main__':
