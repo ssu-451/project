@@ -1,5 +1,5 @@
 """
-sldkfj
+Neural network
 """
 import copy
 import math
@@ -8,7 +8,7 @@ import random
 
 class NeuralNetwork():
     """
-    s
+    The class which emulates neural network
     """
     def __init__(self, dimension=None, rate=0.1):
         if dimension is None:
@@ -27,7 +27,7 @@ class NeuralNetwork():
 
     def shuffle(self):
         """
-        asd
+        Set random weights
         """
         for i, _ in enumerate(self.graph):
             for j, _ in enumerate(self.graph[i]):
@@ -36,7 +36,7 @@ class NeuralNetwork():
 
     def run(self, inputs):
         """
-        sds
+        Get actual result
         """
         for i, _ in enumerate(inputs):
             self.outputs[0][i] = inputs[i]
@@ -54,21 +54,21 @@ class NeuralNetwork():
     @staticmethod
     def sigmoid(value):
         """
-        skdj
+        Usual sigmoid
         """
         return 1 / (1 + math.exp(-value))
 
     @classmethod
     def differential(cls, value):
         """
-        sd
+        Derivation of the sigmoid
         """
         sigm = cls.sigmoid(value)
         return sigm * (1 - sigm)
 
     def train(self, inputs, expected_result):
         """
-        ljsdf
+        Allows to teach NN with input data and expected result
         """
         actual_result = self.run(inputs)
         self.delta[-1][0] = ((expected_result - actual_result) *
@@ -87,7 +87,7 @@ class NeuralNetwork():
 
 def main():
     """
-    slkdfj
+    The main function of the application
     """
     network = NeuralNetwork([3, 5, 6, 7, 1], 0.2)
 
