@@ -26,7 +26,7 @@ class NeuralNetwork():
 
         self.bias = [[0 for _ in range(self.layer_size[i + 1])]
                      for i in range(len(self.layer_size) - 1)]
-        
+
         self.shuffle()
 
     def shuffle(self):
@@ -34,7 +34,7 @@ class NeuralNetwork():
         Set random weights
         """
         for i, _ in enumerate(self.graph):
-            for j, _ in enumerate(self.graph[i]):                
+            for j, _ in enumerate(self.graph[i]):
                 for k, _ in enumerate(self.graph[i][j]):
                     self.graph[i][j][k] = random.random() * 3
 
@@ -55,7 +55,7 @@ class NeuralNetwork():
                 for k in range(self.layer_size[i - 1]):
                     self.outputs[i][j] += (self.outputs[i - 1][k] *
                                            self.graph[i - 1][k][j])
-                # self.outputs[i][j] += self.bias[i - 1][j]
+                self.outputs[i][j] += self.bias[i - 1][j]
                 self.outputs[i][j] = self.sigmoid(self.outputs[i][j])
 
         return self.outputs[-1][0]
@@ -64,14 +64,14 @@ class NeuralNetwork():
     def sigmoid(value):
         """
         Usual sigmoid
-        
+
         try:
             a = 1 / (1 + math.exp(-value))
         except:
             print('fucked up! value:', value)
             print(self.graph)
         """
-            
+
         return 1 / (1 + math.exp(-value))
 
     def differential(self, value):
@@ -108,18 +108,9 @@ def main():
     """
     The main function of the application
     """
-    # network = NeuralNetwork([3, 7, 6, 5, 1], 0.2)
+    network = NeuralNetwork([3, 7, 6, 5, 1], 0.2)
     # network = NeuralNetwork([3, 3, 1], 0.2)
-    network = NeuralNetwork([3, 20, 1], 0.2)
-
-    for i, _ in enumerate(network.graph):
-        for j, _ in enumerate(network.graph[i]):
-            #print('[{}, {}]'.format(i, j))
-            for _, _ in enumerate(network.graph[i][j]):
-                # print('{:.2f}'.format(network.graph[i][j][k]))
-                pass
-
-    # print(network.graph)
+    # network = NeuralNetwork([3, 6, 7, 1], 0.2)
 
     for _ in range(1000):
         network.train([0, 0, 0], 0)
