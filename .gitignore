@@ -1,2 +1,7 @@
 venv
-
+*.pyc
+*.egg-info
+*.eggs
+*.tox
+*.cache
+__pycache__

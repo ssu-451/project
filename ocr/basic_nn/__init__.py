@@ -102,35 +102,3 @@ class NeuralNetwork():
             for j in range(self.layer_size[i + 1]):
                 self.bias[i][j] += (1 * self.delta[i + 1][j] *
                                     self.learning_rate)
-
-
-def main():
-    """
-    The main function of the application
-    """
-    network = NeuralNetwork([3, 7, 6, 5, 1], 0.2)
-    # network = NeuralNetwork([3, 3, 1], 0.2)
-    # network = NeuralNetwork([3, 6, 7, 1], 0.2)
-
-    for _ in range(1000):
-        network.train([0, 0, 0], 0)
-        network.train([0, 0, 1], 1)  # 1 # 1
-        network.train([0, 1, 0], 0)
-        network.train([0, 1, 1], 0)  # 1
-        network.train([1, 0, 0], 1)  # 1 # 1
-        network.train([1, 0, 1], 1)  # 1 # 1
-        network.train([1, 1, 0], 0)
-        network.train([1, 1, 1], 1)      # 1
-
-    print(network.run([0, 0, 0]))
-    print(network.run([0, 0, 1]))
-    print(network.run([0, 1, 0]))
-    print(network.run([0, 1, 1]))
-    print(network.run([1, 0, 0]))
-    print(network.run([1, 0, 1]))
-    print(network.run([1, 1, 0]))
-    print(network.run([1, 1, 1]))
-
-
-if __name__ == '__main__':
-    main()
