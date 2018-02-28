@@ -1,4 +1,5 @@
 ## СИСТЕМА РАСПОЗНАВАНИЯ ТЕКСТА
+[![Build Status](https://travis-ci.org/ssu-451/project.svg?branch=master)](https://travis-ci.org/ssu-451/project)
 
 **Описание:**
 Система представляет собой нейронную сеть, распознающую заданный картинкой печатный текст. 
