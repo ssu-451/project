@@ -27,8 +27,8 @@ def generate():
         fonts = [font for font in file.read().split('\n') if font]
     with open('resolutions.txt') as file:
         resolutions = file.read().split('\n')
-    if not os.path.exists('TrainingData'):
-        os.mkdir('TrainingData')
+    if not os.path.exists('training_data'):
+        os.mkdir('training_data')
     resolution_pattern = re.compile(r'(\d+)x(\d+)')
     pbar = tqdm.tqdm(total=len(resolutions) * len(fonts) * len(symbols))
     for resolution in resolutions:
@@ -47,7 +47,7 @@ def generate():
                 if symbol in ['\n', '\t', '\r']:
                     pbar.update()
                     continue
-                image_name = ('TrainingData/'
+                image_name = ('training_data/'
                               'R{res}|F{font}|S{symbol}.png').format(
                                   res=resolution, font=font, symbol=symbol)
                 if os.path.exists(image_name) and not args.force:
