@@ -18,7 +18,7 @@ class BasicNnTestCase(unittest.TestCase):
         """
         for _ in range(10):
             network = ocr.basic_nn.nn.NeuralNetwork([3, 3, 1], 0.2)
-            for _ in range(100000):
+            for _ in range(10000):
                 network.train([0, 0, 0], 0)
                 network.train([0, 0, 1], 1)  # 1 # 1
                 network.train([0, 1, 0], 0)
