@@ -16,23 +16,23 @@ class BasicNnTestCase(unittest.TestCase):
         """
         Test for the small NN
         """
-        network = ocr.basic_nn.nn.NeuralNetwork([3, 3, 1], 0.2)
+        for _ in range(10):
+            network = ocr.basic_nn.nn.NeuralNetwork([3, 3, 1], 0.2)
+            for _ in range(10000):
+                network.train([0, 0, 0], 0)
+                network.train([0, 0, 1], 1)  # 1 # 1
+                network.train([0, 1, 0], 0)
+                network.train([0, 1, 1], 0)  # 1
+                network.train([1, 0, 0], 1)  # 1 # 1
+                network.train([1, 0, 1], 1)  # 1 # 1
+                network.train([1, 1, 0], 0)
+                network.train([1, 1, 1], 1)      # 1
 
-        for _ in range(1000):
-            network.train([0, 0, 0], 0)
-            network.train([0, 0, 1], 1)  # 1 # 1
-            network.train([0, 1, 0], 0)
-            network.train([0, 1, 1], 0)  # 1
-            network.train([1, 0, 0], 1)  # 1 # 1
-            network.train([1, 0, 1], 1)  # 1 # 1
-            network.train([1, 1, 0], 0)
-            network.train([1, 1, 1], 1)      # 1
-
-        self.assertTrue(network.run([0, 0, 0]) < self.ACCURACY)
-        self.assertTrue(network.run([0, 0, 1]) > 1 - self.ACCURACY)
-        self.assertTrue(network.run([0, 1, 0]) < self.ACCURACY)
-        self.assertTrue(network.run([0, 1, 1]) < self.ACCURACY)
-        self.assertTrue(network.run([1, 0, 0]) > 1 - self.ACCURACY)
-        self.assertTrue(network.run([1, 0, 1]) > 1 - self.ACCURACY)
-        self.assertTrue(network.run([1, 1, 0]) < self.ACCURACY)
-        self.assertTrue(network.run([1, 1, 1]) > 1 - self.ACCURACY)
+            self.assertTrue(network.run([0, 0, 0]) < self.ACCURACY)
+            self.assertTrue(network.run([0, 0, 1]) > 1 - self.ACCURACY)
+            self.assertTrue(network.run([0, 1, 0]) < self.ACCURACY)
+            self.assertTrue(network.run([0, 1, 1]) < self.ACCURACY)
+            self.assertTrue(network.run([1, 0, 0]) > 1 - self.ACCURACY)
+            self.assertTrue(network.run([1, 0, 1]) > 1 - self.ACCURACY)
+            self.assertTrue(network.run([1, 1, 0]) < self.ACCURACY)
+            self.assertTrue(network.run([1, 1, 1]) > 1 - self.ACCURACY)
