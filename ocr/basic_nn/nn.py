@@ -10,9 +10,7 @@ class NeuralNetwork():
     """
     The class which emulates neural network
     """
-    def __init__(self, dimension=None, rate=0.1):
-        if dimension is None:
-            dimension = [1, 1]
+    def __init__(self, dimension, rate=0.1):
         self.layer_size = dimension
         self.learning_rate = rate
 
@@ -42,7 +40,7 @@ class NeuralNetwork():
             for j, _ in enumerate(self.bias[i]):
                 self.bias[i][j] = random.random() * 3
 
-    def run(self, inputs):
+    def run(self, inputs, need_values=False):
         """
         Get actual result
         """
@@ -58,20 +56,18 @@ class NeuralNetwork():
                 self.outputs[i][j] += self.bias[i - 1][j]
                 self.outputs[i][j] = self.sigmoid(self.outputs[i][j])
 
-        return self.outputs[-1][0]
+        if need_values:
+            return self.outputs[-1]
+
+        max_val, idx_max = max((val, idx) for idx, val in
+                               enumerate(self.outputs[-1]))
+        return idx_max
 
     @staticmethod
     def sigmoid(value):
         """
         Usual sigmoid
-
-        try:
-            a = 1 / (1 + math.exp(-value))
-        except:
-            print('fucked up! value:', value)
-            print(self.graph)
         """
-
         return 1 / (1 + math.exp(-value))
 
     def differential(self, value):
@@ -85,9 +81,12 @@ class NeuralNetwork():
         """
         Allows to teach NN with input data and expected result
         """
-        actual_result = self.run(inputs)
-        self.delta[-1][0] = ((expected_result - actual_result) *
-                             self.differential(actual_result))
+        act_values = self.run(inputs, need_values=True)
+        for i, _ in enumerate(act_values):
+            exp_val = float(i == expected_result)
+            self.delta[-1][i] = ((exp_val - act_values[i]) *
+                                  self.differential(act_values[i]))
+                                  
         for i in range(len(self.layer_size) - 2, -1, -1):
             for j in range(self.layer_size[i]):
                 self.delta[i][j] = 0
@@ -102,3 +101,13 @@ class NeuralNetwork():
             for j in range(self.layer_size[i + 1]):
                 self.bias[i][j] += (1 * self.delta[i + 1][j] *
                                     self.learning_rate)
+
+
+if __name__ == '__main__':
+    nn = NeuralNetwork([3, 4, 3])
+    for _ in range(10000):
+        nn.train([0, 1, 1], 1)
+        nn.train([1, 0, 1], 0)
+
+    print(nn.run([0, 1, 1], need_values=False))
+    print(nn.run([1, 0, 1], need_values=False))
