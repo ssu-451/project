@@ -15,3 +15,12 @@ def get_pixels(path):
     bw_img = img.convert('1')
     pix = np.array(bw_img, dtype=int)
     return pix
+
+
+def resize_image(path, size=(15, 15)):
+    """This method takes 2 arguments: path to the image
+    and a tuple representing resolution of new image.
+    It returns a new resized image."""
+    old_img = Image.open(path)
+    new_img = old_img.resize(size, Image.LANCZOS)
+    return new_img
