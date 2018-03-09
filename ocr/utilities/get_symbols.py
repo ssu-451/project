@@ -15,10 +15,10 @@ def get_symbols_from_image(path):
     gs_img = img.convert('L')
     lines = get_lines(gs_img)
     symbols = []
-    for l in lines:
-        words = get_words(l)
-        for w in words:
-            symbols.append(get_symbols(w))
+    for line in lines:
+        words = get_words(line)
+        for word in words:
+            symbols.append(get_symbols(word))
     return symbols
 
 
@@ -30,23 +30,30 @@ def get_lines(gs_img):
     pix = np.array(gs_img, dtype=int)
     height = pix.shape[0]
     width = pix.shape[1]
-    sj = pix.sum(axis=1) / width
-    sb = st = 254
+    s_j = pix.sum(axis=1) / width
+    s_b = s_t = 254
     is_begin = 0
     line = [0, 0]
     part = []
-    n = height - 3
     j = 2
-    while j < n:
-
-        if sj[j] < st and sj[j - 1] > st and sj[j - 2] > st and\
-                        sj[j + 1] < sb and sj[j + 2] < sb and sj[j + 3] < sb:
+    while j < height - 3:
+        c_1 = (s_j[j] < s_t
+               and s_j[j - 1] > s_t
+               and s_j[j - 2] > s_t
+               and s_j[j + 1] < s_b
+               and s_j[j + 2] < s_b
+               and s_j[j + 3] < s_b)
+        if c_1:
             is_begin = 1
             line[0] = j
             j += 1
         if is_begin:
-            if (sj[j] < st and sj[j + 1] > sb) or \
-                    (sj[j + 1] > sb and sj[j + 2] > sb and sj[j + 3] > sb):
+            c_2 = ((s_j[j] < s_t
+                    and s_j[j + 1] > s_b)
+                   or (s_j[j + 1] > s_b
+                       and s_j[j + 2] > s_b
+                       and s_j[j + 3] > s_b))
+            if c_2:
                 is_begin = 0
                 line[1] = j
                 part.append(line)
@@ -55,8 +62,8 @@ def get_lines(gs_img):
 
     lines = []
     for line in part:
-        a = gs_img.crop((0, line[0], width, line[1]))
-        lines.append(a)
+        line_img = gs_img.c_rop((0, line[0], width, line[1]))
+        lines.append(line_img)
     return lines
 
 
@@ -69,11 +76,12 @@ def get_words(line_img):
     height = pix.shape[0]
     width = pix.shape[1]
 
-    def fx(t):
-        return 0 if t < 210 else 255
+    def contrast(pix):
+        """Contrast image"""
+        return 0 if pix < 210 else 255
 
-    fx = np.vectorize(fx)
-    pix = fx(pix)
+    contrast = np.vectorize(contrast)
+    pix = contrast(pix)
 
     for i in range(3, height - 3):
         for j in range(3, width - 3):
@@ -87,21 +95,21 @@ def get_words(line_img):
                     pix[i + k][j - 3] = 1
                     pix[i + k][j + 3] = 1
 
-    ci = pix.sum(axis=0) / height
-    cr = cl = 255
+    c_i = pix.sum(axis=0) / height
+    c_r = 255
     is_begin = False
     word = [0, 0]
     part = []
-    m = width - 4
     i = 1
-    while i < m:
-        if not is_begin and ci[i] < cl and ci[i + 1] < cl and ci[i - 1] >= cl:
+    while i < width - 4:
+        if (not is_begin) and c_i[i] < c_r and\
+                        c_i[i + 1] < c_r and c_i[i - 1] >= c_r:
             is_begin = True
             word[0] = i
             i += 1
         if is_begin:
-            if ci[i] >= cr and ci[i + 1] >= cr and ci[i + 2] >= cr and\
-                            ci[i - 1] < cr and ci[i - 2] < cr:
+            if c_i[i] >= c_r and c_i[i + 1] >= c_r and c_i[i + 2] >= c_r and\
+                            c_i[i - 1] < c_r and c_i[i - 2] < c_r:
                 is_begin = False
                 word[1] = i
                 part.append(word)
@@ -110,8 +118,8 @@ def get_words(line_img):
 
     words = []
     for word in part:
-        a = line_img.crop((word[0], 0, word[1], height))
-        words.append(a)
+        word_img = line_img.c_rop((word[0], 0, word[1], height))
+        words.append(word_img)
     return words
 
 
@@ -120,71 +128,75 @@ def get_symbols(word_img):
      as an argument and return an array of symbols images,  (PIL.Image object).
      This method is used by get_symbols_from_image method to split the image
       of word into symbols images"""
+    def get_partitions(c_i, width, d_f, c_b):
+        """Return potential symbols partitions"""
+        w_0 = []
+        left = 0
+        right = left + d_f
+        while right < width:
+            max_ind = left + np.argmax(c_i[left:right])
+            w_0.append(max_ind)
+            left = max_ind + 1
+            right = left + d_f
+
+        w_1 = []
+        for part in w_0:
+            if c_i[part] > c_b:
+                w_1.append(part)
+        return w_1
+
+    def remove_spare_partitions(c_i, c_max, w_1, d_min, height):
+        """Remove all spare symbols partitions"""
+        p_1 = int(height * 0.3)
+        p_2 = p_1 + int(height * 0.4)
+
+        b_h = pix[:p_1].argmin(axis=0)
+        b_m = pix[p_1:p_2].argmin(axis=0)
+        b_l = pix[p_2:height].argmin(axis=0)
+
+        w_2 = []
+        for ind in w_1:
+            c_l = ((b_h[ind] == b_h[ind - 1]
+                    or b_m[ind] == b_m[ind - 1]
+                    or b_l[ind] == b_l[ind - 1])
+                   and c_i[ind - 1] > c_max[ind]
+                   and c_max[ind - 1] < 2 *
+                   math.fabs(c_max[ind - 1] - c_max[ind]))
+            c_r = ((b_h[ind] == b_h[ind + 1]
+                    or b_m[ind] == b_m[ind + 1]
+                    or b_l[ind] == b_l[ind + 1])
+                   and c_i[ind] > c_max[ind + 1]
+                   and c_max[ind] < 2 * math.fabs(c_max[ind] - c_max[ind + 1]))
+            if not (c_l and c_r):
+                w_2.append(ind)
+
+        i = 1
+        while i < len(w_2):
+            if w_2[i] - w_2[i - 1] < d_min:
+                w_2.remove(w_2[i])
+            else:
+                i += 1
+
+        return w_2
+
     pix = np.array(word_img, dtype=int)
     height = pix.shape[0]
-    width = pix.shape[1]
-    ci = pix.sum(axis=0) / height
-    kb = ci.sum() / width
-
-    cmax = pix.max(axis=0)
-    cb = kb * 1.05
-
-    df = int(0.3 * height)
-    dmin = int(0.4 * height)
-
-    w0 = []
-    left = 0
-    r = left + df
-    while r < width:
-        max = left + np.argmax(ci[left:r])
-        w0.append(max)
-        left = max + 1
-        r = left + df
-
-    w1 = []
-    for l in w0:
-        if ci[l] > cb:
-            w1.append(l)
-
-    p1 = int(height * 0.3)
-    p2 = p1 + int(height * 0.4)
-
-    bh = pix[:p1].argmin(axis=0)
-    bm = pix[p1:p2].argmin(axis=0)
-    bl = pix[p2:height].argmin(axis=0)
-
-    w2 = []
-    i = 0
-    n = len(w1)
-    while i < n:
-        ind = w1[i]
-        cl2 = (ci[ind - 1] > cmax[ind]
-               and cmax[ind - 1] < 2 * math.fabs(cmax[ind - 1] - cmax[ind]))
-        cr2 = (ci[ind] > cmax[ind + 1]
-               and cmax[ind] < 2 * math.fabs(cmax[ind] - cmax[ind + 1]))
-        cl = (bh[ind] == bh[ind - 1] or bm[ind] == bm[ind - 1]
-              or bl[ind] == bl[ind - 1]) and cl2
-        cr = (bh[ind] == bh[ind + 1] or bm[ind] == bm[ind + 1]
-              or bl[ind] == bl[ind + 1]) and cr2
-        if not (cl and cr):
-            w2.append(w1[i])
-        i += 1
-
-    i = 1
-    while i < len(w2):
-        if w2[i] - w2[i - 1] < dmin:
-            w2.remove(w2[i])
-        else:
-            i += 1
-
+    c_i = pix.sum(axis=0) / height
+    w_0 = get_partitions(c_i,
+                         pix.shape[1],
+                         int(0.3 * height),
+                         c_i.sum()/pix.shape[1] * 1.05)
+    w_1 = remove_spare_partitions(c_i,
+                                  pix.max(axis=0),
+                                  w_0,
+                                  int(0.4 * height),
+                                  height)
     symbols = []
-    n = len(w2)
-
     i = 1
-    while i < n:
-        left = w2[i - 1]
-        r = w2[i]
-        a = word_img.crop((left, 0, r, height))
-        symbols.append(a)
+    while i < len(w_1):
+        left = w_1[i - 1]
+        right = w_1[i]
+        symb_img = word_img.c_rop((left, 0, right, height))
+        symbols.append(symb_img)
         i += 1
     return symbols
