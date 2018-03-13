@@ -1,24 +1,32 @@
 #!/usr/bin/python3
 
-import flask
+"""A module for flask web interface"""
+
 import random
 import time
+import flask
 
-app = flask.Flask(__name__)
-symbols = '''0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"',-.:;? абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'''
+APP = flask.Flask(__name__)
+SYMBOLS = ('''0123456789abcdefghijklmn'''
+           '''opqrstuvwxyzABCDEFGHIJKL'''
+           '''MNOPQRSTUVWXYZ!"',-.:;? '''
+           '''абвгдеёжзийклмнопрстуфхц'''
+           '''чшщъыьэюяАБВГДЕЁЖЗИЙКЛМН'''
+           '''ОПРСТУФХЦЧШЩЪЫЬЭЮЯ''')
 
 
-@app.route('/', methods=['GET'])
+@APP.route('/', methods=['GET'])
 def index():
+    """A function handling / requests, returns the webpage for one symbol"""
     return flask.redirect('/static/index.html')
 
 
-@app.route('/api/v0.1/symbol', methods=['POST'])
+@APP.route('/api/v0.1/symbol', methods=['POST'])
 def recognise_symbol():
+    """A function handling API recognise symbol requests"""
     time.sleep(.5)  # Simulating the delay when processing the symbol
-    return flask.jsonify({'result': random.choice(symbols)})
+    return flask.jsonify({'result': random.choice(SYMBOLS)})
 
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', 8001)
-
+    APP.run('0.0.0.0', 8001)
