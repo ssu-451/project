@@ -1,0 +1,7 @@
+[2018-03-13 14:57:14 +0400] [11359] [INFO] Starting gunicorn 19.7.1
+[2018-03-13 14:57:14 +0400] [11359] [INFO] Listening at: http://127.0.0.1:8001 (11359)
+[2018-03-13 14:57:14 +0400] [11359] [INFO] Using worker: eventlet
+[2018-03-13 14:57:14 +0400] [11407] [INFO] Booting worker with pid: 11407
+[2018-03-13 14:58:24 +0400] [11359] [INFO] Handling signal: term
+[2018-03-13 14:58:24 +0400] [11407] [INFO] Worker exiting (pid: 11407)
+[2018-03-13 14:58:25 +0400] [11359] [INFO] Shutting down: Master
