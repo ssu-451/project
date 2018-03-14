@@ -18,12 +18,6 @@ SERVICE_COMMAND = 'gunicorn -D ' \
                   '--log-file error.log ' \
                   'main:APP'
 SERVICE_SHORT_NAME = '127.0.0.1:8001'
-if not os.path.exists('access.log'):
-    open('access.log', 'w').close()
-ACCESS_LOG_SIZE = os.stat('access.log').st_size
-if not os.path.exists('error.log'):
-    open('error.log', 'w').close()
-ERROR_LOG_SIZE = os.stat('error.log').st_size
 
 
 def status(show_ps=False):
@@ -79,6 +73,14 @@ def status_output(args):
 
 def start_output(args):
     """A function which starts the service with human-readable output"""
+
+    if not os.path.exists('access.log'):
+        open('access.log', 'w').close()
+    access_log_size = os.stat('access.log').st_size
+    if not os.path.exists('error.log'):
+        open('error.log', 'w').close()
+    error_log_size = os.stat('error.log').st_size
+
     if status(args.ps):
         print('Service is already running')
     else:
@@ -86,9 +88,9 @@ def start_output(args):
         if not status(args.ps):  # If it didn't work
             print('ERROR: could not start the service!!!')
             print('    Access log extract for the start attempt:')
-            print_file_extract('access.log', ACCESS_LOG_SIZE)
+            print_file_extract('access.log', access_log_size)
             print('    Error log extract for the start attempt:')
-            print_file_extract('error.log', ERROR_LOG_SIZE)
+            print_file_extract('error.log', error_log_size)
         else:  # If it did work
             print('Service has been started')
 
