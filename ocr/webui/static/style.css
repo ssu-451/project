@@ -1,0 +1,16 @@
+html, body{
+  margin: 0;
+}
+body{
+  font-family: sans-serif;
+}
+#result{
+  text-align: center;
+  display: none;
+}
+#result h2{
+  font-size: 4em;
+}
+#result h1{
+  font-size: 8em;
+}
