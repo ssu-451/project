@@ -9,3 +9,4 @@ tqdm==4.19.5
 flask==0.12.2
 gunicorn==19.7.1
 eventlet==0.22.1
+requests==2.18.1
