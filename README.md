@@ -1,23 +1,28 @@
-## СИСТЕМА РАСПОЗНАВАНИЯ ТЕКСТА
+## *OCR — Optical Character Recognition System*
 
-**Описание:**
-Система представляет собой нейронную сеть, распознающую заданный картинкой печатный текст. 
-На вход система принимает картинку с текстом. 
-На выходе пользователь получает текст с картинки.
+[![Build Status](https://travis-ci.org/ssu-451/project.svg?branch=master)](https://travis-ci.org/ssu-451/project)
 
-**Требования к системе:**
-1. Текст на картинке - печатный.
-2. Текст черного цвета на белом фоне. 
-3. Картинка имеет формат jpeg, png или bmp.
-4. Распознаются символы русского и английского алфавита, цифры, пробелы между словами, а также следующие знаки . , '' "" ! ? : ; -
-5. Корректная работа для текстов с разными шрифтами.
-6. Если система не может распознать текст, выдается сообщение об этом.
-7. Если система получает файл неверного формата или слишком большого размера, выдается сообщение об этом.
-8. Возможность работы в двух режимах: *"обучение"* и *"функционирование"*. 
-(возможно обучение нужно только на этапе распознавания единичных символов?) 
-   - Режим обучения (один из вариантов):  
-      - *пользователь обучает систему* - если выдан верный результат распознавания, пользователь подтверждает это; 
-  если неверный - вводит правильный ответ.
-      - *автоматическое обучение* - запуск работы системы на обучающей выборке (например, картинки всех допустимых символов) и сравнение результатов с заранее известными ответами.    
-   - В режиме функционирования система не ждет ответа пользователя после выдачи результатов работы.  
-9. Язык разработки: Python 3 
+**Description:**
+*The system is a neural network that recognizes text presented by the picture. 
+The system takes a picture with text as input data. At the output, user receives text from the image.*
+
+**Details:** 
+- Development language is **_Python 3_**.
+- Used technologies and tools see in [requirements.txt](https://github.com/ssu-451/project/blob/master/requirements.txt).
+- To get started see [getting_started.rst](https://github.com/ssu-451/project/blob/master/docs/getting_started.rst).
+
+**System description:**
+1. The text in the picture is typed (not handwritten).
+2. The text is black on a white background.
+3. The picture is in the format *jpeg, png* or *bmp*.
+4. System recognizes the following **characters**:
+   - **_spaces_**
+   - **_numbers:_** 0123456789
+   - **_letters of english alphabet:_** abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+   - **_letters of russian alphabet:_** абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ
+   - **_symbols:_** !"',-.:;? 
+5. System should recognize symbols printed in any font with size *16 pixels*.
+6. Image should be clear and have proper resolution.
+7. If the system can not recognize the text, it displays error message.
+8. If the system receives too large or wrong formatted file, it displays error message.
+9. Before first time functioning, neural network should be trained. Result of training should be correct recognition of all valid symbols (each symbol separately).
