@@ -39,13 +39,16 @@ class NeuralNetwork():
         """
         Store NN's coefficients to the file
         """
-        json.dump(self.graph, open(filename, 'w'))
+        json.dump({'graph': self.graph, 'bias': self.bias},
+                  open(filename, 'w'))
 
     def load(self, filename):
         """
         Load NN's coefficients from the file
         """
-        self.graph = json.load(open(filename))
+        aux = json.load(open(filename))
+        self.graph = aux['graph']
+        self.bias = aux['bias']
 
     def run(self, inputs, need_values=False):
         """
