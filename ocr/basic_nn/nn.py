@@ -88,6 +88,7 @@ class NeuralNetwork():
         """
         Usual sigmoid
         """
+        value = sorted([-200, value, 200])[1]
         return 1 / (1 + math.exp(-value))
 
     def train(self, inputs, expected_result):
@@ -107,6 +108,8 @@ class NeuralNetwork():
                     self.graph[i][j][k] += (self.outputs[i][j] *
                                             self.delta[i + 1][k] *
                                             self.learning_rate)
+                    self.graph[i][j][k] = (
+                        sorted([-200, self.graph[i][j][k], 200])[1])
                     self.delta[i][j] += (self.delta[i + 1][k] *
                                          self.graph[i][j][k])
                 self.delta[i][j] *= self.differential(self.outputs[i][j])

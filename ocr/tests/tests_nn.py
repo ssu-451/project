@@ -8,6 +8,7 @@ import unittest
 
 import ocr.basic_nn.nn
 from ocr.settings import BASE_DIR
+from ocr.basic_nn import tools
 
 
 class BasicNnTestCase(unittest.TestCase):
@@ -56,6 +57,34 @@ class BasicNnTestCase(unittest.TestCase):
         for i in range(train_data['size']):
             self.assertTrue(self.is_valid_result(
                 network, train_data['list'][i]['inputs'], i))
+
+    def test_simple_training(self):
+        """
+        Checks crucial functions of the NN
+        """
+        nn_constr = [16*16, 150, 3]
+        train_data = json.load(
+            open(os.path.join(BASE_DIR,
+                              os.path.join('tests', 'nn_aye.json'))))
+        tools.training_session(train_data, nn_constr, True, 101)
+        network = ocr.basic_nn.nn.NeuralNetwork(nn_constr)
+        network.load(os.path.join(BASE_DIR, 'coefficients.json'))
+
+        self.assertEqual(
+            tools.recognize_symbol(train_data['list'][0]['inputs'],
+                                   nn_constr,
+                                   'AYE'),
+            'A')
+        self.assertEqual(
+            tools.recognize_symbol(train_data['list'][1]['inputs'],
+                                   nn_constr,
+                                   'AYE'),
+            'Y')
+        self.assertEqual(
+            tools.recognize_symbol(train_data['list'][2]['inputs'],
+                                   nn_constr,
+                                   'AYE'),
+            'E')
 
     def is_valid_result(self, network, inputs, expected_result):
         """
