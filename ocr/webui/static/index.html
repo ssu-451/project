@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>OCR</title>
+    <link rel="stylesheet" href="style.css">
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <form action="/api/v0.1/symbol" method="post">
+      <input type="file" name="file" accept="image/*">
+      <input type="submit">
+    </form>
+    <div id="result">
+      <h2>THAT SYMBOL IS</h2>
+      <h1></h1>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
