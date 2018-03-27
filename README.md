@@ -19,7 +19,7 @@ The system takes a picture with text as input data. At the output, user receives
    - **_numbers:_** 0123456789
    - **_letters of english alphabet:_** abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
    - **_symbols:_** .,"?'!-
-5. Image should be clear and have proper resolution.
+5. Image should be clear and have proper aspect ratio.
 6. If the system can not recognize the text, it displays error message.
 7. If the system receives too large or wrong formatted file, it displays error message.
 8. Before first time functioning, neural network should be trained. Result of training should be correct recognition of all valid symbols (each symbol separately).
