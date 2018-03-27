@@ -7,6 +7,7 @@ import os
 import unittest
 
 import ocr.basic_nn.nn
+from ocr.settings import BASE_DIR
 
 
 class BasicNnTestCase(unittest.TestCase):
@@ -43,8 +44,9 @@ class BasicNnTestCase(unittest.TestCase):
         """
         Test case for the NN that recognizes only A, Y and E letters
         """
-        train_data = json.load(open(os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'nn_aye.json')))
+        train_data = json.load(
+            open(os.path.join(BASE_DIR,
+                              os.path.join('tests', 'nn_aye.json'))))
         network = ocr.basic_nn.nn.NeuralNetwork([16*16, 150, 3], 0.5)
 
         for _ in range(100):
