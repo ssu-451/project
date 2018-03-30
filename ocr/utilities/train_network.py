@@ -21,7 +21,10 @@ def main(repetition=REPETITION):
         assert len(elem['inputs']) == NN_LAYERS[0]
 
     if len(sys.argv) == 2 and sys.argv[1] == 'restart':
-        training_session(train_data, NN_LAYERS, restart=True, repetition=repetition)
+        training_session(train_data,
+                         NN_LAYERS,
+                         restart=True,
+                         repetition=repetition)
     else:
         training_session(train_data, NN_LAYERS, repetition=repetition)
 
