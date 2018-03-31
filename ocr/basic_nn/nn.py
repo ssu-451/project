@@ -11,6 +11,9 @@ class NeuralNetwork():
     """
     The class which emulates neural network
     """
+    NORM_PARAM = 30.0
+    MAX_WEIGHT = 300.0
+
     def __init__(self, dimension, rate=0.1):
         self.layer_size = dimension
         self.learning_rate = rate
@@ -91,7 +94,7 @@ class NeuralNetwork():
         """
         Usual sigmoid
         """
-        value = sorted([-200, value, 200])[1]
+        value = sorted([-300, value, 300])[1]
         return 1 / (1 + math.exp(-value))
 
     def train(self, inputs, expected_result):
@@ -104,6 +107,8 @@ class NeuralNetwork():
             self.delta[-1][i] = ((exp_val - act_values[i]) *
                                  self.differential(act_values[i]))
 
+        overweight = False
+        max_val = 0
         for i in range(len(self.layer_size) - 2, -1, -1):
             for j in range(self.layer_size[i]):
                 self.delta[i][j] = 0
@@ -111,8 +116,10 @@ class NeuralNetwork():
                     self.graph[i][j][k] += (self.outputs[i][j] *
                                             self.delta[i + 1][k] *
                                             self.learning_rate)
-                    self.graph[i][j][k] = (
-                        sorted([-200, self.graph[i][j][k], 200])[1])
+                    if abs(self.graph[i][j][k]) > self.MAX_WEIGHT:
+                        overweight = True
+                        max_val = max(max_val, self.graph[i][j][k])
+
                     self.delta[i][j] += (self.delta[i + 1][k] *
                                          self.graph[i][j][k])
                 self.delta[i][j] *= self.differential(self.outputs[i][j])
@@ -120,3 +127,15 @@ class NeuralNetwork():
             for j in range(self.layer_size[i + 1]):
                 self.bias[i][j] += (1 * self.delta[i + 1][j] *
                                     self.learning_rate)
+                if abs(self.bias[i][j]) > self.MAX_WEIGHT:
+                    overweight = True
+                    max_val = max(max_val, self.bias[i][j])
+
+        if overweight:
+            for i in range(len(self.layer_size) - 2, -1, -1):
+                for j in range(self.layer_size[i]):
+                    for k in range(self.layer_size[i + 1]):
+                        self.graph[i][j][k] /= max_val / self.NORM_PARAM
+
+                for j in range(self.layer_size[i + 1]):
+                    self.bias[i][j] /= max_val / self.NORM_PARAM
